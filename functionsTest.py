@@ -116,20 +116,39 @@ def knapSack(W, wt, val,n):
             knapSack(W, wt, val, n-1))
 
 
-# def knapSack(W, wt, val, n):
-#     K = [[0 for x in range(W + 1)] for x in range(n + 1)]
-#
-#     # Build table K[][] in bottom up manner
-#     for i in range(n + 1):
-#         for w in range(W + 1):
-#             if i == 0 or w == 0:
-#                 K[i][w] = 0
-#             elif wt[i - 1] <= w:
-#                 K[i][w] = max(val[i - 1] + K[i - 1][w - wt[i - 1]], K[i - 1][w])
-#             else:
-#                 K[i][w] = K[i - 1][w]
-#
-#     return K[n][W]
+# def knapSacktest(W, liste, n, actions=[]):
+#     if n == 0 or W == 0:
+#         return 0,""
+#     if (liste[n-1][1] > W):
+#         return knapSackList(W, liste, n-1, actions)
+#     else:
+#         knapSack1 = knapSacktest(W - liste[n - 1][1], liste, n - 1, actions)[0]
+#         print("valminusone - " + str(knapSack1))
+#         knapSack2 = knapSacktest(W, liste, n - 1)[0]
+#         print("valone - " + str(liste[n - 1][-1] + knapSack2))
+#         if knapSack2 > liste[n-1][-1] + knapSack1 :
+#             actions.append(liste[n-1][0])
+#         return max(
+#             liste[n-1][-1] + knapSackList(
+#                 W-liste[n-1][1], liste, n-1),
+#             knapSackList(W, liste, n-1)), actions
+
+def knapSacktest(W, wt, val,ids,n):
+
+    if n == 0 or W == 0:
+        return 0,""
+    if (wt[n-1] > W):
+        return knapSack(W, wt, val,ids, n-1)
+
+    else:
+        knapsack1=knapSack(W-wt[n-1], wt, val,ids, n-1)
+        knapsack2=knapSack(W, wt, val,ids, n-1)
+        if  val[n-1]+knapsack1[0]>knapsack2[0]:
+            return (val[n-1]+knapsack1[0],str(ids[n-1])+","+knapsack1[1])
+        return knapsack2
+
+# knapSack(W, wt, val,ids,len(val))
+
 
 val_list = []
 def knapSackName(W, wt, val,n, name_list):
@@ -143,22 +162,69 @@ def knapSackName(W, wt, val,n, name_list):
                 W-wt[n-1], wt, val, n-1, name_list),
             knapSackName(W, wt, val, n-1, name_list))
 
+# def knapSackList(W, liste, n):
+#     if n == 0 or W == 0:
+#         return 0
+#     if (liste[n-1][1] > W):
+#         return knapSackList(W, liste, n-1)
+#     else:
+#         # print(liste[n-1][2])
+#         return max(
+#             liste[n-1][-1] + knapSackList(
+#                 W-liste[n-1][1], liste, n-1),
+#             knapSackList(W, liste, n-1))
+
 def knapSackList(W, liste, n):
     if n == 0 or W == 0:
-        return 0
+        return 0,""
     if (liste[n-1][1] > W):
         return knapSackList(W, liste, n-1)
     else:
         # print(liste[n-1][2])
-        return max(
-            liste[n-1][-1] + knapSackList(
-                W-liste[n-1][1], liste, n-1),
-            knapSackList(W, liste, n-1))
+        knapSack1 = knapSackList(W-liste[n-1][1], liste, n-1)
+        knapSack2 = knapSackList(W, liste, n-1)
+        if liste[n-1][-1] + knapSack1[0] > knapSack2[0]:
+            return (liste[n-1][-1] + knapSack1[0], str(liste[n-1][0] + ", "+knapSack1[1]))
+        return knapSack2
+
+
+def knapSackList_deux(W, liste, n):
+    if n == 0 or W == 0:
+        return 0, ""
+    if (liste[n-1][1] > W):
+        return knapSackList_deux(W, liste, n-1)
+    else:
+        val_minus_one = knapSackList_deux(W - liste[n - 1][1], liste, n - 1)
+        print("valminusone - " +str(val_minus_one))
+
+        val_one = knapSackList_deux(W, liste, n - 1)
+        print("valone - " +str(liste[n-1][-1] + val_one))
+
+        if liste[n-1][-1] + val_minus_one[0] > val_one[0]:
+            return liste[n-1][-1] + val_minus_one[0], val_minus_one[1] + "-" + liste[n-1][0]
+        else:
+            return val_one[0], val_one[1]
+
+
+def knapSack_try(W, wt, val, n):
+    K = [[0 for x in range(W + 1)] for x in range(n + 1)] # Build table K[][] in bottom to up manner
+    for i in range(n + 1):
+        for w in range(W + 1):
+            if (i == 0 or w == 0):
+                K[i][w] = 0
+            elif wt[i-1] <= w:
+                K[i][w] = max(val[i-1] + K[i-1][int(w-wt[i-1])],
+                K[i-1][w])
+            else:
+                K[i][w] = K[i-1][w]
+    return K[n][W] # Driver code
+
+
 
 
 def glouton(liste, taille_max):
     reponse = []
-    totale_duree = 0
+    total_benefit = 0
     prix = 0
     i = 0
     while i < len(liste) and prix <= taille_max:
@@ -167,9 +233,9 @@ def glouton(liste, taille_max):
         if prix + p <= taille_max:
             reponse.append(liste[i][0])
             prix += p
-            totale_duree += liste[i][-1]
+            total_benefit += liste[i][-1]
             i += 1
-    return reponse, prix, totale_duree
+    return reponse, round(float(prix),2), total_benefit
 
 
 def quickSort(alist):
