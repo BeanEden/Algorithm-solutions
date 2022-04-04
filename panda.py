@@ -1,8 +1,8 @@
 import pandas as pd
 from functionsTest import glouton,knapSack,mergeSort
 
-# file = "C:\opc finis\Projet 7\dataset1_Python+P7.csv"
-file = "C:\opc finis\Projet 7\dataset2_Python+P7.csv"
+file = "C:\opc finis\Projet 7\dataset1_Python+P7.csv"
+# file = "C:\opc finis\Projet 7\dataset2_Python+P7.csv"
 
 df = pd.read_csv(file, low_memory=False)
 total_money = 500
@@ -26,7 +26,7 @@ df_duplicate = df_sorted.drop_duplicates(subset='name', keep="first")
 df_duplicate = df_duplicate.set_index("name")
 df_duplicate = df_duplicate.sort_values(by=["benefit"], ascending=False)
 # print(df_duplicate)
-
+df_duplicate.to_csv("C:\opc finis\Projet 7\dataset1.csv")
 # data_dict = df_duplicate.to_dict("index")
 # print(data_dict)
 

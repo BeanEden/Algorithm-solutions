@@ -9,7 +9,7 @@ listy = {i.split(":")[0]: tuple(map(lambda x: round(float(x), 2), i.split(":")[1
 
 # print(listy[1][0])
 
-wt = list(map(lambda x: listy[x][0], listi))
+wt = list(map(lambda x: print(listy[x][0]), listi))
 # print("wt - " + str(wt))
 
 val = list(map(lambda x: listy[x][1], listi))
@@ -30,8 +30,6 @@ def choose_iter(elements, length):
 
 
 start = time.time()
-
-
 for i in range(1, 21):
     s = list(map(lambda x: (x,
                             sum(map(lambda j: listy[j][0], x)),
@@ -42,11 +40,8 @@ for i in range(1, 21):
         d = max(s, key=lambda x: x[2])
         if d[2] > maxy[2]:
             maxy = d
-
-
 end = time.time()
 print(maxy)
-
 timing = end-start
 print(timing)
 print(timing/20)
