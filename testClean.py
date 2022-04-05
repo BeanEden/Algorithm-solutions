@@ -1,29 +1,18 @@
-from functionsTest import creation_dossier_categorie, rows_list, value_cleaner, csv_read_threaded, threaded_clean_list, merge_sort, knapSackList
+from functionsTest import complete_algorithm, csv_read_threaded
 import time
-import math
-
-list_csv_threaded = csv_read_threaded("C:\opc finis\Projet 7\dataset2_Python+P7.csv")
-start = time.time()
-list_clean = threaded_clean_list(list_csv_threaded)
-list_test = merge_sort(list_clean)
-end = time.time()
-timing = end-start
-print(timing)
-print(len(list_test))
-n = len(list_test)
 
 W = 500
+fold = 1
+file = "C:\opc finis\Projet 7\dataset1_Python+P7.csv"
 
-start = time.time()
-# result_minus = knapSackList(W, short_list, n)
-result_minus = knapSackList(W, list_test, n)
-print(result_minus)
-end = time.time()
-timing = end-start
-print(timing)
+start_one = time.time()
+list_csv_threaded = csv_read_threaded(file)
+complete_algorithm(W, list_csv_threaded, start_one, fold)
 
-fichier_csv = rows_list(W, list_test, n)
-path = creation_dossier_categorie(fichier_csv)
+print("")
 
+file_two = "C:\opc finis\Projet 7\dataset2_Python+P7.csv"
 
-
+start_two = time.time()
+list_csv_threaded_two = csv_read_threaded(file_two)
+complete_algorithm(W, list_csv_threaded_two, start_two, fold)

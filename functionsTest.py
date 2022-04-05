@@ -1,39 +1,41 @@
 import csv
 import concurrent.futures
 import os
-import genericpath
 import time
 
 
-def merge_sort(lst):
-    if len(lst) <= 1:
-        return lst
-    middle = len(lst) // 2
-    left = lst[:middle]
-    # print("left" + str(left))
-    right = lst[middle:]
-    # print("right" + str(right))
-    sleft = merge_sort(left)
-    sright = merge_sort(right)
-    return merge_list(sleft, sright)
+# Arrondi à deux décimales
+def round_float(arg):
+    return round(float(arg), 2)
 
 
-def merge_list(left, right):
-    result = []
-    while (left and right):
-        if left[0][2] > right[0][2]:
-            result.append(left[0])
-            left.pop(0)
+# Génération de liste pour l'algorithme de force brute
+def choose_iter(elements, length):
+    for i in range(len(elements)):
+        if length == 1:
+            yield [elements[i], ]
         else:
-            result.append(right[0])
-            right.pop(0)
-    if left:
-        result += left
-    if right:
-        result += right
-    return result
+            for j in choose_iter(elements[i+1:len(elements)], length-1):
+                yield [elements[i], ] + j
 
 
+# 1 - Lecture du csv avec calcul du bénéfice
+def csv_read_threaded(file):
+    with open(file, newline='') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        next(spamreader)
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            list_csv = list(executor.map(lambda x: benefit_row_calculator(x), spamreader))
+    return list_csv
+
+
+# Calcul du bénéfice
+def benefit_row_calculator(row):
+    row_calculated = [row[0], float(row[1]), float(row[2])] + [round(float((float(row[1]) * float(row[2]) / 100)), 2)]
+    return row_calculated
+
+
+# 2 - Nettoyage des actions à prix nul ou négatif
 def value_cleaner(list_arg, x):
     if x[1] > 0:
         return list_arg.append(x)
@@ -48,105 +50,123 @@ def threaded_clean_list(list_arg):
     return list_clean
 
 
-def round_float(arg):
-    return round(float(arg), 2)
-
-#true
-def knapSack(W, wt, val, n):
-    K = [[0 for x in range(W + 1)] for x in range(n + 1)]
-
-    # Build table K[][] in bottom up manner
-    for i in range(n + 1):
-        for w in range(W + 1):
-            if i == 0 or w == 0:
-                K[i][w] = 0
-            elif wt[i - 1] <= w:
-                K[i][w] = max(val[i - 1]
-                              + K[i - 1][int(w - wt[i - 1])],
-                              K[i - 1][w])
-            else:
-                K[i][w] = K[i - 1][w]
-
-    return K[n][W]
+# 3 - Merge sort
+def merge_sort(lst):
+    if len(lst) <= 1:
+        return lst
+    middle = len(lst) // 2
+    left = lst[:middle]
+    right = lst[middle:]
+    sleft = merge_sort(left)
+    sright = merge_sort(right)
+    return merge_list(sleft, sright)
 
 
-def knapSackList(W, liste, n):
-    K = [[0 for x in range(W + 1)] for x in range(n + 1)]
-    # Build table K[][] in bottom up manner
-    for i in range(n + 1):
-        for w in range(W + 1):
-            if i == 0 or w == 0:
-                K[i][w] = 0
-            elif liste[i - 1][1] <= w:
-                K[i][w] = max(liste[i - 1][-1]
-                              + K[i - 1][int(w - liste[i - 1][1])],
-                              K[i - 1][w])
-            else:
-                K[i][w] = K[i - 1][w]
-
-    return K[n][W]
-
-
-# version liste
-# def knapSackList(W, liste, n):
-#     if n == 0 or W == 0:
-#         return 0,""
-#     if (liste[n-1][1] > W):
-#         return knapSackList(W, liste, n-1)
-#     else:
-#         # print(liste[n-1][2])
-#         knapSack1 = knapSackList(W-liste[n-1][1], liste, n-1)
-#         knapSack2 = knapSackList(W, liste, n-1)
-#         if liste[n-1][-1] + knapSack1[0] > knapSack2[0]:
-#             return (liste[n-1][-1] + knapSack1[0], str(liste[n-1][0] + ", "+knapSack1[1]))
-#         return knapSack2
-
-
-def choose_iter(elements, length):
-    for i in range(len(elements)):
-        if length == 1:
-            yield [elements[i],]
+def merge_list(left, right):
+    result = []
+    while left and right:
+        if left[0][2] > right[0][2]:
+            result.append(left[0])
+            left.pop(0)
         else:
-            for next in choose_iter(elements[i+1:len(elements)], length-1):
-                yield [elements[i],] + next
+            result.append(right[0])
+            right.pop(0)
+    if left:
+        result += left
+    if right:
+        result += right
+    return result
 
 
-def csv_read_threaded(file):
-    with open(file, newline='') as csvfile:
-        spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
-        header = next(spamreader)
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            list_csv = list(executor.map(lambda x: benefit_row_calculator(x), spamreader))
-    return list_csv
+# 4 - Algorithme du sac à dos
+def knap_sack_list_name(w, liste, n):
+    z = 0.0
+    k = [[[0, ""] for x in range(w + 1)] for x in range(n + 1)]
+    for i in range(n + 1):
+        for j in range(w + 1):
+            if i == 0 or j == 0:
+                k[i][j][0] = 0
+                k[i][j][1] = ""
+            elif liste[i - 1][1] <= j:
+                knap_one = liste[i - 1][-1] + k[i - 1][int(j - liste[i - 1][1])][0]
+                knap_two = k[i - 1][j][0]
+                if knap_one > knap_two:
+                    k[i][j][0] = knap_one
+                    k[i][j][1] = liste[i - 1][0] + ", " + k[i - 1][int(j - liste[i - 1][1])][1]
+                    z = w - liste[i - 1][1]
+                else:
+                    k[i][j][0] = knap_two
+                    k[i][j][1] = k[i - 1][j][1]
+            else:
+                k[i][j][0] = k[i - 1][j][0]
+                k[i][j][1] = k[i - 1][j][1]
+    return z, round_float(k[n][w][0]), k[n][w][1]
 
 
-def benefit_row_calculator(row):
-    row_calculated = [row[0], float(row[1]), float(row[2])] + [round(float((float(row[1]) * float(row[2]) / 100)), 2)]
-    return row_calculated
+# Précision
+def precision_fold(list_arg, fold=1):
+    list_arg[1] = list_arg[1]*fold
+    return list_arg
 
-def creation_dossier_categorie(rows_list):
+
+# Fonction de print
+def print_result(tuple_arg, timing, n, fold):
+    cost = tuple_arg[0]/fold
+    percent_profit = round_float(tuple_arg[1] / cost*100)
+    share_list = tuple_arg[2].split(", ")
+    share_list.pop()
+    share_list.reverse()
+    timing = round(timing, 4)
+    check = round(timing / n, 4)
+    print(f"""Algorithme terminé :
+    Actions pertinentes étudiées : {n}
+    Précision : {fold/100}/0.01
+    Temps écoulé : {timing} secondes ({check}s/n)
+    Coût total : {cost}
+    Bénéfice : {tuple_arg[1]} ({percent_profit}% de profit)
+    Actions sélectionnées : {share_list}""")
+    # list(map(lambda x: print(x), share_list))
+
+
+# Fonction d'algorithme complet
+def complete_algorithm(w, list_arg, start_time, fold=1):
+    list_clean = threaded_clean_list(list_arg)
+    list_test = merge_sort(list_clean)
+    n = len(list_test)
+    w = w * fold
+    list_ten = list(map(lambda x: precision_fold(x, fold), list_test))
+    result_fast = knap_sack_list_name(w, list_ten, n)
+    end = time.time()
+    timing = end - start_time
+    print_result(result_fast, timing, n, fold)
+
+
+# Ecriture dans un csv
+def creation_dossier_category(rows_list_arg):
     cwd = os.getcwd()
     directory = cwd + '/'
     nom_csv = 'test5.csv'
     path = directory + nom_csv
-    EN_TETE_COLONNES = ["n", "temps", "gain"]
+    header = ["n", "temps", "gain"]
     with open(os.path.join(directory + nom_csv), 'w', newline="", encoding="utf-8-sig") as csv_file:
-        ligneXcel = csv.writer(csv_file, delimiter=',')
-        ligneXcel.writerow(EN_TETE_COLONNES)
+        excel_row = csv.writer(csv_file, delimiter=',')
+        excel_row.writerow(header)
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            csv_rows = list(executor.map(lambda x: ligneXcel.writerow(x), rows_list))
+            list(executor.map(lambda x: excel_row.writerow(x), rows_list_arg))
     return path
 
-def rows_list(W, list_test, n):
+
+# Liste des lignes
+def rows_list(w, list_test, n):
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        tables = list(executor.map(lambda x: boucle(W, list_test, x), range(n)))
+        tables = list(executor.map(lambda x: boucle(w, list_test, x), range(n)))
     return tables
 
 
-
-def boucle(W, list_test, i):
+# Fonction boucle pour l'écriture dans un csv
+def boucle(w, list_test, i):
     start = time.time()
-    result_minus = knapSackList(W, list_test, i)
+    result_minus = knap_sack_list_name(w, list_test, i)
     end = time.time()
     timing = end - start
     row = [i, timing, round_float(result_minus)]
