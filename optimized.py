@@ -1,8 +1,8 @@
-from functionsTest import complete_algorithm, csv_read_threaded
+from functions import complete_algorithm, csv_read_threaded
 import time
 
 W = 500
-fold = 1
+fold = 10
 file = "C:\opc finis\Projet 7\dataset1_Python+P7.csv"
 
 start_one = time.time()
@@ -16,3 +16,4 @@ file_two = "C:\opc finis\Projet 7\dataset2_Python+P7.csv"
 start_two = time.time()
 list_csv_threaded_two = csv_read_threaded(file_two)
 complete_algorithm(W, list_csv_threaded_two, start_two, fold)
+

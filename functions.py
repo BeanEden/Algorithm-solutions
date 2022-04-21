@@ -79,28 +79,28 @@ def merge_list(left, right):
 
 
 # 4 - Algorithme du sac à dos
-def knap_sack_list_name(w, liste, n):
-    z = 0.0
+def knap_sack_list_name(w, list_arg, n):
+    total_price = 0.0
     k = [[[0, ""] for x in range(w + 1)] for x in range(n + 1)]
     for i in range(n + 1):
         for j in range(w + 1):
             if i == 0 or j == 0:
                 k[i][j][0] = 0
                 k[i][j][1] = ""
-            elif liste[i - 1][1] <= j:
-                knap_one = liste[i - 1][-1] + k[i - 1][int(j - liste[i - 1][1])][0]
+            elif list_arg[i - 1][1] <= j:
+                knap_one = list_arg[i - 1][-1] + k[i - 1][int(j - list_arg[i - 1][1])][0]
                 knap_two = k[i - 1][j][0]
                 if knap_one > knap_two:
                     k[i][j][0] = knap_one
-                    k[i][j][1] = liste[i - 1][0] + ", " + k[i - 1][int(j - liste[i - 1][1])][1]
-                    z = w - liste[i - 1][1]
+                    k[i][j][1] = list_arg[i - 1][0] + ", " + k[i - 1][int(j - list_arg[i - 1][1])][1]
+                    total_price = w - list_arg[i - 1][1]
                 else:
                     k[i][j][0] = knap_two
                     k[i][j][1] = k[i - 1][j][1]
             else:
                 k[i][j][0] = k[i - 1][j][0]
                 k[i][j][1] = k[i - 1][j][1]
-    return z, round_float(k[n][w][0]), k[n][w][1]
+    return total_price, round_float(k[n][w][0]), k[n][w][1]
 
 
 # Précision
@@ -129,23 +129,24 @@ def print_result(tuple_arg, timing, n, fold):
 
 
 # Fonction d'algorithme complet
-def complete_algorithm(w, list_arg, start_time, fold=1):
+def complete_algorithm(w, list_arg, start_time,  fold=1):
     list_clean = threaded_clean_list(list_arg)
-    list_test = merge_sort(list_clean)
-    n = len(list_test)
+    list_clean = merge_sort(list_clean)
+    n = len(list_clean)
     w = w * fold
-    list_ten = list(map(lambda x: precision_fold(x, fold), list_test))
+    list_ten = list(map(lambda x: precision_fold(x, fold), list_clean))
     result_fast = knap_sack_list_name(w, list_ten, n)
     end = time.time()
     timing = end - start_time
     print_result(result_fast, timing, n, fold)
+    return result_fast, timing
 
 
 # Ecriture dans un csv
-def creation_dossier_category(rows_list_arg):
+def creation_dossier_category(rows_list_arg,i=""):
     cwd = os.getcwd()
     directory = cwd + '/'
-    nom_csv = 'test5.csv'
+    nom_csv = "test_file1_"+i+".csv"
     path = directory + nom_csv
     header = ["n", "temps", "gain"]
     with open(os.path.join(directory + nom_csv), 'w', newline="", encoding="utf-8-sig") as csv_file:
@@ -163,11 +164,25 @@ def rows_list(w, list_test, n):
     return tables
 
 
+# # Liste des lignes
+# def rows_list_complete(w, list_test, n):
+#     with concurrent.futures.ThreadPoolExecutor() as executor:
+#         tables = list(executor.map(lambda x: boucle_complete(tuple_return, timing), range(n)))
+#     return tables
+
+
 # Fonction boucle pour l'écriture dans un csv
 def boucle(w, list_test, i):
     start = time.time()
     result_minus = knap_sack_list_name(w, list_test, i)
     end = time.time()
-    timing = end - start
-    row = [i, timing, round_float(result_minus)]
+    timing = round(float(end - start), 6)
+    nb_actions = int(len(result_minus[-1])/12)
+    row = [i, timing, round_float(result_minus[1]), nb_actions]
     return row
+
+
+# def boucle_complete(w, list_arg, start_time, fold = 1, i):
+#     tuple_return = complete_algorithm(w, list_arg, start_time, fold)
+#     row = [i, timing, tuple_return[1], tuple_return[0], len(tuple_return[-1])]
+#     return row

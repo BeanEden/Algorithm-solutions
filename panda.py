@@ -1,5 +1,5 @@
 import pandas as pd
-from functionsTest import glouton,knapSack,mergeSort
+from functions import glouton,knapSack,mergeSort
 
 file = "C:\opc finis\Projet 7\dataset1_Python+P7.csv"
 # file = "C:\opc finis\Projet 7\dataset2_Python+P7.csv"
