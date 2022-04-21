@@ -31,12 +31,12 @@ def choose_iter(elements, length):
             for next in choose_iter(elements[i+1:len(elements)], length-1):
                 yield [elements[i], ] + next
 
-n = 21
+n = len(listi)
 study_list = []
 
 
 # Algorithme de force brute
-for j in range(1,n):
+for j in range(1,n+1):
     start = time.time()
     for i in range(1, j):
 

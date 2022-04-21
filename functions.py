@@ -21,6 +21,7 @@ def choose_iter(elements, length):
 
 # 1 - Lecture du csv avec calcul du bénéfice
 def csv_read_threaded(file):
+    print(f"Reading {file}...")
     with open(file, newline='') as csvfile:
         spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
         next(spamreader)
@@ -108,10 +109,22 @@ def precision_fold(list_arg, fold=1):
     list_arg[1] = list_arg[1]*fold
     return list_arg
 
+def precision_print(fold):
+    if fold == 1:
+        return "à l'euro"
+    if fold == 10:
+        return "au dixième d'euro"
+    if fold == 100:
+        return "au centime d'euro"
+    else:
+        return "precision fold incorrect"
+
+
 
 # Fonction de print
 def print_result(tuple_arg, timing, n, fold):
     cost = tuple_arg[0]/fold
+    precision = precision_print(fold)
     percent_profit = round_float(tuple_arg[1] / cost*100)
     share_list = tuple_arg[2].split(", ")
     share_list.pop()
@@ -120,7 +133,7 @@ def print_result(tuple_arg, timing, n, fold):
     check = round(timing / n, 4)
     print(f"""Algorithme terminé :
     Actions pertinentes étudiées : {n}
-    Précision : {fold/100}/0.01
+    Précision : {precision}
     Temps écoulé : {timing} secondes ({check}s/n)
     Coût total : {cost}
     Bénéfice : {tuple_arg[1]} ({percent_profit}% de profit)
