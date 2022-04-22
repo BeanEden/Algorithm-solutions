@@ -3,6 +3,7 @@ import time
 import csv
 
 
+
 # Arrondi à deux décimales
 def round_float(arg):
     return round(float(arg), 2)
@@ -117,8 +118,7 @@ def print_result(tuple_arg, timing, n, fold):
     Actions pertinentes étudiées : {n}
     Précision : {precision}
     Temps écoulé : {timing} secondes ({check}s/n)
-    Coût total : {cost}
-    Bénéfice : {tuple_arg[1]} ({percent_profit}% de profit)
+    Bénéfice : {tuple_arg[1]}
     Actions sélectionnées : {share_list}""")
 
 

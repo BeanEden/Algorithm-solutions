@@ -95,6 +95,7 @@ def knap_sack_list_name(w, list_arg, n):
                     k[i][j][0] = knap_one
                     k[i][j][1] = list_arg[i - 1][0] + ", " + k[i - 1][int(j - list_arg[i - 1][1])][1]
                     total_price = w - list_arg[i - 1][1]
+                    # print(total_price)
                 else:
                     k[i][j][0] = knap_two
                     k[i][j][1] = k[i - 1][j][1]
@@ -144,7 +145,7 @@ def print_result(tuple_arg, timing, n, fold):
 # Fonction d'algorithme complet
 def complete_algorithm(w, list_arg, start_time,  fold=1):
     list_clean = threaded_clean_list(list_arg)
-    # list_clean = merge_sort(list_clean)
+    list_clean = merge_sort(list_clean)
     n = len(list_clean)
     w = w * fold
     list_ten = list(map(lambda x: precision_fold(x, fold), list_clean))
