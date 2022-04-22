@@ -144,7 +144,7 @@ def print_result(tuple_arg, timing, n, fold):
 # Fonction d'algorithme complet
 def complete_algorithm(w, list_arg, start_time,  fold=1):
     list_clean = threaded_clean_list(list_arg)
-    list_clean = merge_sort(list_clean)
+    # list_clean = merge_sort(list_clean)
     n = len(list_clean)
     w = w * fold
     list_ten = list(map(lambda x: precision_fold(x, fold), list_clean))

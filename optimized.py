@@ -43,7 +43,7 @@ def threaded_clean_list(list_arg):
     return list_clean
 
 
-# 4 - Algorithme du sac à dos
+# 3 - Algorithme du sac à dos
 def knap_sack_list_name(w, list_arg, n):
     """Knapsack algorithm, including share names
 
