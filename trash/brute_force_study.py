@@ -63,7 +63,7 @@ def choose_iter(elements, length):
                 yield [elements[i], ] + next
 
 
-file_two = "C:\opc finis\Projet 7\data\dataset2_Python+P7.csv"
+file_two = "/data/dataset2_Python+P7.csv"
 list_start = csv_read_threaded(file_two)
 list_clean = threaded_clean_list(list_start)
 
@@ -105,7 +105,7 @@ for j in range(26,n+1):
 
 df_study=pd.DataFrame(study_list, columns=["i", "timing", "profit"])
 
-writer = pd.ExcelWriter('brute_force_2.xlsx', engine='xlsxwriter')
+writer = pd.ExcelWriter('../brute_force_2.xlsx', engine='xlsxwriter')
 df_time = df_study["timing"]
 df_profit = df_study["profit"]
 df_time.to_excel(writer, sheet_name='time', index=False)

@@ -1,4 +1,4 @@
-from functions import complete_algorithm, csv_read_threaded
+from trash.functions import complete_algorithm, csv_read_threaded
 import time
 
 W = 500

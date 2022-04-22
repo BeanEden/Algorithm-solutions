@@ -126,7 +126,7 @@ def complete_algorithm(w, list_arg, start_time,  n,fold=1):
 fold = 1
 W = 500
 
-file = "C:\opc finis\Projet 7\data\dataset1_Python+P7.csv"
+file = "/data/dataset1_Python+P7.csv"
 list_csv_threaded = csv_read_threaded(file)
 list_clean = threaded_clean_list(list_csv_threaded)
 n = len(list_clean)
@@ -154,7 +154,7 @@ for j in range(10):
 print(df_full)
 
 # df_study=pd.DataFrame(study_list, columns=["timing", "profit"])
-writer = pd.ExcelWriter('study_file2_unsorted.xlsx', engine='xlsxwriter')
+writer = pd.ExcelWriter('../study_file2_unsorted.xlsx', engine='xlsxwriter')
 # df_time = df_study["timing"]
 # df_profit = df_study["profit"]
 df_full.to_excel(writer, sheet_name='time', index=False)
